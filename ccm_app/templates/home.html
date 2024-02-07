@@ -2,14 +2,42 @@
 
 {% block content %}
 
-<div class="col-md-6 offset-md-3">
+
 
     {% if user.is_authenticated %}
-
 <h1>Welcome, {{ user.username }}!</h1>
-    <br>
+<br><br>
+    <table class="table table-striped table-hover">
+   <thead class="table-light">
+    <tr>
+        <th scope="col">Payment reference </th>
+        <th scope="col">Name</th>
+        <th scope="col">Contact method</th>
+        <th scope="col">Contact date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% if records %}
+        {% for record in records %}
+      <tr>
+          <td><a href="{%url 'record' record.id %}">{{ record.payment_reference }}</a> </td>
+          <td>{{ record.first_name }} {{ record.last_name }}</td>
+          <td>{{ record.contact_method }}</td>
+          <td>{{ record.contact_date }}</td>
+          <td>{{ record.status_of_contact }}</td>
+          <td>{{ record.notes }}</td>
+      </tr>
+        {% endfor %}
+    {% endif %}
     {% else %}
+    <tr>
+    </tr>
+  </tbody>
+</table>
 
+<div class="col-md-6 offset-md-3">
 <h1>Login </h1>
     <br>
     <form method="POST" action="{% url 'home' %}">
@@ -25,7 +53,6 @@
             <br>
           <button type="submit" class="btn btn-secondary">Log in</button>
     </form>
-</div>
 
 {% endif %}
 
