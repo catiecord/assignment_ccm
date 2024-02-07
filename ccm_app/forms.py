@@ -44,6 +44,14 @@ class SignUpForm(UserCreationForm):
 
 class CustomDateTimeInput(forms.DateTimeInput):
     input_type = 'datetime-local'
+
+# Define choices for contact status
+contact_status_choices = [
+    ('option1', ''),
+    ('option2', 'Contact successful'),
+    ('option3', 'Awaiting response'),
+    ('option4', 'No contact possible'),
+]
 # Create add record form
 class AddRecordForm(forms.ModelForm):
     payment_reference = forms.CharField(required=True, label="", widget=forms.TextInput(
@@ -57,7 +65,7 @@ class AddRecordForm(forms.ModelForm):
     contact_date = forms.DateTimeField(required=True, label="",
         widget=CustomDateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Contact Date'})
     )
-    contact_status = forms.CharField(required=True, label="", widget=forms.TextInput(
+    contact_status = forms.ChoiceField(choices=contact_status_choices, required=True, label="", widget=forms.Select(
         attrs={'class': 'form-control', 'placeholder': 'Contact Status'}))
     notes = forms.CharField(required=True, label="", widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Notes'}))
@@ -66,3 +74,7 @@ class AddRecordForm(forms.ModelForm):
         model = Record
         fields = ('payment_reference', 'first_name', 'last_name', 'contact_method', 'contact_date', 'contact_status',
                   'notes')
+
+class RecordSearch(forms.Form):
+    search = forms.CharField(required=False, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Search...'}))

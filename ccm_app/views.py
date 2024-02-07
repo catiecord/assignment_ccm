@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
-from .forms import SignUpForm, AddRecordForm
-from .models import Record, Audit
+from .forms import SignUpForm, AddRecordForm, RecordSearch
+from .models import Record
 
 
 def home(request):
@@ -112,36 +112,6 @@ def user_management(request):
     else:
         messages.success(request, 'You must be logged in to view users!')
         return redirect('home')
-def user_logs(request):
-    """
-    Displays a page with a list of all audit logs to the superuser.
-
-    - Accessible only to authenticated users due to the @login_required decorator.
-    - Checks if the user is a superuser:
-        - If not, the user is redirected to the home page with an error message.
-    - If the user is a superuser:
-        - Fetches all Audit objects from the database and orders them by the action_datetime field in descending order.
-        - Renders the 'knowledge/audit_logs.html' template with the context containing the fetched Audit objects.
-
-    Parameters:
-    - request (HttpRequest): The HTTP request object, which contains information about the current user.
-
-    Returns:
-    - HttpResponse: The rendered HTML page for superusers, or a redirect to the home page for non-superusers.
-    """
-    if not request.user.is_superuser:
-        messages.error(request, "You don't have permission to view this page.")
-        return redirect("home")
-
-    # Fetch all audit logs
-    logs = Audit.objects.all().order_by(
-        "-action_datetime"
-    )  # Most recent actions first
-
-    context = {"logs": logs}
-
-    return render(request, "user_logs.html", context)
-
 def user_active_status(request, user_id):
     """
     Toggles the active status of a user account.
@@ -198,3 +168,16 @@ def user_active_status(request, user_id):
             request, f"{user.username}'s account has been deactivated."
         )
     return redirect("user_management")
+
+def search_results(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            searched = request.POST['searched']
+            records = Record.objects.filter(
+                first_name__icontains=searched) | Record.objects.filter(
+                last_name__icontains=searched) | Record.objects.filter(
+                payment_reference__icontains=searched)
+            return render(request, 'search_results.html', {'searched': searched, 'records': records})
+    else:
+        messages.success(request, 'You must be logged in to search records!')
+        return redirect('home')

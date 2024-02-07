@@ -10,15 +10,11 @@
             {% if user.is_staff %}
                 <li class="nav-item">
                     <strong><a class="nav-link">Administrator</a></strong>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Admin tasks
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'user_management' %}">User management</a></li>
-                    <li><a class="dropdown-item" href="{% url 'user_logs' %}">Audit logs</a></li>
-                  </ul>
                 </li>
+                 <li class="nav-item">
+              <a class="nav-link" href="{% url 'user_management' %}">User Management</a>
+          </li>
+
 
             {% endif %}
           {% if not user.is_staff %}
@@ -41,6 +37,11 @@
           </li>
           {% endif %}
       </ul>
+        <form class="d-flex" role="search" method="POST" action="{% url 'search_results' %}">
+            {% csrf_token %}
+        <input class="form-control me-2" type="search" placeholder="Search Records" name="searched">
+        <button class="btn btn-success" type="submit">Search</button>
+      </form>
     </div>
   </div>
 </nav>
