@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crm_app',
+    'ccm_app',
 ]
 
 MIDDLEWARE = [
@@ -33,7 +33,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'assigment_crm_project.urls'
+ROOT_URLCONF = 'assigment_ccm_project.urls'
 
 TEMPLATES = [
     {
@@ -51,7 +51,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'assigment_crm_project.wsgi.application'
+WSGI_APPLICATION = 'assigment_ccm_project.wsgi.application'
 
 
 # Database
