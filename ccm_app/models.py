@@ -8,7 +8,7 @@ class Record(models.Model):
     last_name = models.CharField(max_length=50)
     contact_method = models.CharField(max_length=60)
     contact_date = models.DateTimeField()
-    status_of_contact = models.CharField(max_length=60)
+    contact_status = models.CharField(max_length=60)
     notes = models.TextField()
 
     def __str__(self):
