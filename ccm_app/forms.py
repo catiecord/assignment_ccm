@@ -42,7 +42,8 @@ class SignUpForm(UserCreationForm):
             '<span class="form-text text-muted"><small>Enter the same password as before, '
             'for verification.</small></span>')
 
-
+class CustomDateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
 # Create add record form
 class AddRecordForm(forms.ModelForm):
     payment_reference = forms.CharField(required=True, label="", widget=forms.TextInput(
@@ -53,8 +54,9 @@ class AddRecordForm(forms.ModelForm):
         attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
     contact_method = forms.CharField(required=True, label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Contact Method'}))
-    contact_date = forms.DateTimeField(required=True, label="", widget=forms.DateTimeInput(
-        attrs={'class': 'form-control', 'placeholder': 'Contact Date'}))
+    contact_date = forms.DateTimeField(required=True, label="",
+        widget=CustomDateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Contact Date'})
+    )
     contact_status = forms.CharField(required=True, label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Contact Status'}))
     notes = forms.CharField(required=True, label="", widget=forms.Textarea(

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg" style="background-color: #5F9EA0">
   <div class="container-fluid">
     <a class="navbar-brand" href="{% url 'home' %}">Payments CCM</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -6,10 +6,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link active" aria-current="page" href="#">Home</a>-->
-<!--        </li>-->
           {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <li class="nav-item">
+                    <strong><a class="nav-link">Administrator</a></strong>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Admin tasks
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">User management</a></li>
+                    <li><a class="dropdown-item" href="#">Audit logs</a></li>
+                  </ul>
+                </li>
+
+            {% endif %}
+          {% if not user.is_staff %}
+                <li class="nav-item">
+                    <strong><a class="nav-link">Staff</a></strong>
+                </li>
+            {% endif %}
           <li class="nav-item">
               <a class="nav-link" href="{% url 'add_record' %}">Add record</a>
           </li>
@@ -25,10 +41,6 @@
           </li>
           {% endif %}
       </ul>
-        <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
     </div>
   </div>
 </nav>
