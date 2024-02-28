@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg" style="background-color: #5F9EA0">
+<nav class="navbar navbar-expand-lg" style="background-color: #A3C1AD">
   <div class="container-fluid">
     <a class="navbar-brand" href="{% url 'home' %}">Payments CCM</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,8 +15,8 @@
                     Admin tasks
                   </a>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">User management</a></li>
-                    <li><a class="dropdown-item" href="#">Audit logs</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user_management' %}">User management</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user_logs' %}">Audit logs</a></li>
                   </ul>
                 </li>
 
