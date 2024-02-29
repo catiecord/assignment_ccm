@@ -8,10 +8,13 @@
       <h5 class="card-title">{{ record.first_name }} {{ record.last_name }}</h5>
       <strong>Contact date:</strong><p class="card-text"> {{ record.contact_date }}</p>
       <strong>Contact method:</strong><p class="card-text"> {{ record.contact_method }}</p>
-      <strong>Contact status:</strong><p class="card-text"> {{ record.status_of_contact }}</p>
+      <strong>Contact status:</strong><p class="card-text"> {{ record.contact_status }}</p>
       <strong>Notes:</strong><p class="card-text"> {{ record.notes }}</p>
-      <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+      <a href="{% url 'home' %}" class="btn btn-outline-primary">Back</a>
+      <a href="{% url 'update_record' record.id %}" class="btn btn-primary">Update record</a>
+      {% if user.is_superuser %}
       <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">Delete</a>
+      {% endif %}
   </div>
 </div>
 </div>

@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 class Record(models.Model):
@@ -8,8 +10,9 @@ class Record(models.Model):
     last_name = models.CharField(max_length=50)
     contact_method = models.CharField(max_length=60)
     contact_date = models.DateTimeField()
-    status_of_contact = models.CharField(max_length=60)
+    contact_status = models.CharField(max_length=60)
     notes = models.TextField()
 
-    def __str__(self):
-        return (f"{self.payment_reference} {self.first_name} {self.last_name}")
+
+
+

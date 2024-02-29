@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
+from .models import Record
 
 
 class SignUpForm(UserCreationForm):
@@ -40,3 +41,40 @@ class SignUpForm(UserCreationForm):
         self.fields['password2'].help_text = (
             '<span class="form-text text-muted"><small>Enter the same password as before, '
             'for verification.</small></span>')
+
+class CustomDateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
+
+# Define choices for contact status
+contact_status_choices = [
+    ('option1', ''),
+    ('option2', 'Contact successful'),
+    ('option3', 'Awaiting response'),
+    ('option4', 'No contact possible'),
+]
+# Create add record form
+class AddRecordForm(forms.ModelForm):
+    payment_reference = forms.CharField(required=True, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Payment Reference'}))
+    first_name = forms.CharField(required=True, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(required=True, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    contact_method = forms.CharField(required=True, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Contact Method'}))
+    contact_date = forms.DateTimeField(required=True, label="",
+        widget=CustomDateTimeInput(attrs={'class': 'form-control', 'placeholder': 'Contact Date'})
+    )
+    contact_status = forms.ChoiceField(choices=contact_status_choices, required=True, label="", widget=forms.Select(
+        attrs={'class': 'form-control', 'placeholder': 'Contact Status'}))
+    notes = forms.CharField(required=True, label="", widget=forms.Textarea(
+        attrs={'class': 'form-control', 'placeholder': 'Notes'}))
+
+    class Meta:
+        model = Record
+        fields = ('payment_reference', 'first_name', 'last_name', 'contact_method', 'contact_date', 'contact_status',
+                  'notes')
+
+class RecordSearch(forms.Form):
+    search = forms.CharField(required=False, label="", widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Search...'}))
