@@ -11,10 +11,13 @@ class SignUpForm(UserCreationForm):
                                  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
     last_name = forms.CharField(label="", max_length=100,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    is_staff = forms.BooleanField(label="Admin user ", required=False,
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'is_staff')
+
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -42,15 +45,16 @@ class SignUpForm(UserCreationForm):
             '<span class="form-text text-muted"><small>Enter the same password as before, '
             'for verification.</small></span>')
 
+
 class CustomDateTimeInput(forms.DateTimeInput):
     input_type = 'datetime-local'
 
 # Define choices for contact status
 contact_status_choices = [
-    ('option1', ''),
-    ('option2', 'Contact successful'),
-    ('option3', 'Awaiting response'),
-    ('option4', 'No contact possible'),
+    ('', 'Select an option'),
+    ('Contact successful', 'Contact successful'),
+    ('Awaiting response', 'Awaiting response'),
+    ('No contact possible', 'No contact possible'),
 ]
 # Create add record form
 class AddRecordForm(forms.ModelForm):
@@ -67,7 +71,7 @@ class AddRecordForm(forms.ModelForm):
     )
     contact_status = forms.ChoiceField(choices=contact_status_choices, required=True, label="", widget=forms.Select(
         attrs={'class': 'form-control', 'placeholder': 'Contact Status'}))
-    notes = forms.CharField(required=True, label="", widget=forms.Textarea(
+    notes = forms.CharField(label="", widget=forms.Textarea(
         attrs={'class': 'form-control', 'placeholder': 'Notes'}))
 
     class Meta:

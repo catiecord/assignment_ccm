@@ -33,12 +33,14 @@ def register_user(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Don't save yet, we need to check if user is superuser
+            user = form.save(commit=False)
+            if form.cleaned_data['is_staff']:
+                user.is_staff = True
             # Authenticate and login user
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            user = authenticate(request, username=username, password=password)
-            login(request, user)
+            user.set_password(form.cleaned_data['password1'])   # Set password
+            user.save()
+            login(request,user )
             messages.success(request, ('You have been registered! Welcome to the CCM App!'))
             return redirect('home')
     else:
@@ -59,7 +61,7 @@ def payment_record(request, pk):
 
 def delete_record(request, pk):
     if request.user.is_authenticated:
-        if request.user.is_superuser:
+        if request.user.is_staff:
             delete_it = Record.objects.get(id=pk)
             delete_it.delete()
             messages.success(request, 'Record has been deleted!')
