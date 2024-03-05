@@ -12,7 +12,7 @@
       <strong>Notes:</strong><p class="card-text"> {{ record.notes }}</p>
       <a href="{% url 'home' %}" class="btn btn-outline-primary">Back</a>
       <a href="{% url 'update_record' record.id %}" class="btn btn-primary">Update record</a>
-      {% if user.is_superuser %}
+      {% if user.is_staff %}
       <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">Delete</a>
       {% endif %}
   </div>
