@@ -1,5 +1,5 @@
 from django.contrib import admin
 from .models import Record
 
-# Register your models here.
+# This is the admin file for the ccm_app app.
 admin.site.register(Record)

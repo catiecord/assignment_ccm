@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if user.is_authenticated %}
 <div class="container">
-    <h1> Welcome, {{user.username}} </h1>
-    <br><br>
+    <h1>Audit logs</h1>
         <table class="table table-striped table-hover text-center">
     <thead class="table-light">
         <tr>
@@ -14,6 +12,10 @@
             <th scope="col">Contact date</th>
             <th scope="col">Status</th>
             <th scope="col">Notes</th>
+            {% if user.is_staff %}
+            <th scope="col">Record created by:</th>
+            <th scope="col">Record updated by:</th>
+            {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -26,6 +28,14 @@
               <td>{{ record.contact_date }}</td>
               <td>{{ record.contact_status }}</td>
               <td>{{ record.notes }}</td>
+            {% if user.is_staff %}
+                <td> <strong>{{ record.created_by }}</strong> on {{record.created_at}}</td>
+              {% if record.updated_by %}
+              <td><strong>{{ record.updated_by}}</strong> on {{record.updated_at}}</td>
+              {% else %}
+              <td> - </td>
+              {% endif %}
+              {% endif %}
           </tr>
             {% endfor %}
         {% endif %}
@@ -33,24 +43,6 @@
         </tr>
       </tbody>
     </table>
-    {% else %}
-    <div class="col-md-6 offset-md-3">
-    <h1>Login </h1>
-        <br>
-        <form method="POST" action="{% url 'home' %}">
-            {% csrf_token %}
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" aria-describedby="username" id="exampleInputEmail1" required>
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" id="exampleInputPassword1" required>
-              </div>
-                <br>
-              <button type="submit" class="btn btn-primary">Log in</button>
-        </form>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
+```
