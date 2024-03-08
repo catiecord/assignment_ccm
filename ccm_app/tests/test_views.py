@@ -42,7 +42,7 @@ class ViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('home'))
 
-# Register View Tests
+    # Register View Tests
     def test_register_user_view_get(self):
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
@@ -78,7 +78,7 @@ class ViewTestCase(TestCase):
         self.assertIsInstance(response.context['form'], SignUpForm)
         self.assertTrue(response.context['form'].errors)
 
-# Login and Logout View Tests
+    # Login and Logout View Tests
     def test_login_logout_flow(self):
         # Login
         login_response = self.client.post(reverse('home'), {'username': 'testuser', 'password': '12345'})
@@ -102,7 +102,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-# Add Record View Tests
+    # Add Record View Tests
 
     def test_add_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -164,7 +164,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-# Update Record View Tests
+    # Update Record View Tests
 
     def test_update_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -239,7 +239,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-# Delete Record View Tests
+    # Delete Record View Tests
 
     def test_delete_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -248,6 +248,7 @@ class ViewTestCase(TestCase):
         response = self.client.get(reverse('delete_record', args=[self.record.id]))
         # Check that the response is a redirect to the 'home' page
         self.assertRedirects(response, expected_redirect_url)
+
     #
     def test_delete_record_view_unauthenticated(self):
         response = self.client.get(reverse('delete_record', args=[self.record.id]))
@@ -270,7 +271,7 @@ class ViewTestCase(TestCase):
         self.assertEqual(Record.objects.count(), record_count - 1)
         self.assertRedirects(response, reverse('home'))
 
-# User Management View Tests
+    # User Management View Tests
 
     def test_user_management_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -293,7 +294,7 @@ class ViewTestCase(TestCase):
         self.assertTrue('users' in response.context)
         self.assertEqual(list(response.context['users']), [self.user])
 
-# Search Results View Tests
+    # Search Results View Tests
 
     def test_search_results_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -321,9 +322,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-
-
-# Audit Logs View Tests
+    # Audit Logs View Tests
 
     def test_audit_logs_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -346,7 +345,7 @@ class ViewTestCase(TestCase):
         self.assertTrue('records' in response.context)
         self.assertEqual(list(response.context['records']), [self.record])
 
-# User Active Status View Tests
+    # User Active Status View Tests
 
     def test_user_active_status_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
