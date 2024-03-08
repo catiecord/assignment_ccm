@@ -10,29 +10,25 @@ from django.contrib.auth.models import User
 def home(request):
     # Get all records
     records = Record.objects.all()
-    # Check if the user is authenticated
+
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
         user = authenticate(request, username=username, password=password)
-        # If the user is authenticated, log them in and provide feedback
+
         if user is not None:
             login(request, user)
             messages.success(request, 'You have been logged in!')
             return redirect('home')
         else:
-            # Check if the user exists with the provided username
             if not User.objects.filter(username=username).exists():
                 messages.error(request, 'User does not exist.')
-            # If the user exists, check if the password is correct
             else:
                 messages.error(request, 'Incorrect password. Please try again.')
-            # If the user is not authenticated, provide feedback and redirect to the home page
             return redirect('home')
-    # If the request method is GET, render the home page
     else:
         return render(request, 'home.html', {'records': records})
-
 
 # This is the view function for the logout page
 def logout_user(request):
@@ -41,32 +37,27 @@ def logout_user(request):
     messages.success(request, 'You have been logged out!')
     return redirect('home')
 
-
 # This is the view function for the register page
 def register_user(request):
-    # Check if the user is authenticated
     if request.method == 'POST':
-        # Create a new user
         form = SignUpForm(request.POST)
-        # If the form is valid, save the user and provide feedback
         if form.is_valid():
-            print(form.cleaned_data)
             user = form.save(commit=False)
-            # Set the user's password
             user.set_password(form.cleaned_data['password1'])
-            # Save the user
             user.save()
-            # Authenticate and login the user
-            login(request, user)
-            messages.success(request, 'You have been registered! Welcome to the CCM App!')
-            return redirect('home')
+            authenticated_user = authenticate(username=user.username, password=form.cleaned_data['password1'])
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+                messages.success(request, 'You have been registered! Welcome to the CCM App!')
+                return redirect('/')
+            else:
+                messages.error(request, 'Failed to log in after registration.')
         else:
-            # Handling form errors
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"{field.capitalize()}: {error}")
-            return redirect('register')
-    # If the user is not authenticated, render the register page
+            # Instead of redirecting, render the template with the invalid form
+            return render(request, 'register.html', {'form': form})
     else:
         form = SignUpForm()
     return render(request, 'register.html', {'form': form})

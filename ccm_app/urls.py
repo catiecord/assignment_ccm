@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 # This is the URL configuration file for the ccm_app app.
 # It maps URL patterns to view functions

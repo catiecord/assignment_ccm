@@ -48,26 +48,21 @@ class SignUpForm(UserCreationForm):
             'for verification.</small></span>')
 
     # Define form validation
+    # Django forms auth already does some of the validation for us
     def clean_username(self):
         # Check if the username already exists
-        username = self.cleaned_data['username']
+        username = self.cleaned_data.get('username')
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already exists.")
+            raise forms.ValidationError('Username already exists.')
         return username
 
     def clean_email(self):
         # Check if the email already exists
         email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email address is already in use.')
         return email
 
-    def clean(self):
-        # Check if the passwords match
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match.")
-        return cleaned_data
 
 
 # Create custom date time input

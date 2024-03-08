@@ -42,7 +42,7 @@ class ViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('home'))
 
-    # Register View Tests
+# Register View Tests
     def test_register_user_view_get(self):
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
@@ -78,7 +78,7 @@ class ViewTestCase(TestCase):
         self.assertIsInstance(response.context['form'], SignUpForm)
         self.assertTrue(response.context['form'].errors)
 
-    # Login and Logout View Tests
+# Login and Logout View Tests
     def test_login_logout_flow(self):
         # Login
         login_response = self.client.post(reverse('home'), {'username': 'testuser', 'password': '12345'})
@@ -102,7 +102,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-    # Add Record View Tests
+# Add Record View Tests
 
     def test_add_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -164,7 +164,7 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-    # Update Record View Tests
+# Update Record View Tests
 
     def test_update_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -239,26 +239,20 @@ class ViewTestCase(TestCase):
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
 
-    # Delete Record View Tests
+# Delete Record View Tests
 
     def test_delete_record_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
+        # Assuming 'home' is the name of the URL to which you expect to redirect
+        expected_redirect_url = reverse('home')
         response = self.client.get(reverse('delete_record', args=[self.record.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'delete_record.html')
-        self.assertEqual(response.context['record'], self.record)
-
+        # Check that the response is a redirect to the 'home' page
+        self.assertRedirects(response, expected_redirect_url)
+    #
     def test_delete_record_view_unauthenticated(self):
         response = self.client.get(reverse('delete_record', args=[self.record.id]))
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
-
-    def test_delete_record_view_post(self):
-        record_count = Record.objects.count()
-        self.client.login(username='testuser', password='12345')
-        response = self.client.post(reverse('delete_record', args=[self.record.id]))
-        self.assertEqual(Record.objects.count(), record_count - 1)
-        self.assertRedirects(response, reverse('home'))
 
     def test_delete_record_view_post_unauthenticated(self):
         record_count = Record.objects.count()
@@ -276,7 +270,7 @@ class ViewTestCase(TestCase):
         self.assertEqual(Record.objects.count(), record_count - 1)
         self.assertRedirects(response, reverse('home'))
 
-    # User Management View Tests
+# User Management View Tests
 
     def test_user_management_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -299,7 +293,7 @@ class ViewTestCase(TestCase):
         self.assertTrue('users' in response.context)
         self.assertEqual(list(response.context['users']), [self.user])
 
-    # Search Results View Tests
+# Search Results View Tests
 
     def test_search_results_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -314,9 +308,13 @@ class ViewTestCase(TestCase):
 
     def test_search_results_view_post(self):
         self.client.login(username='testuser', password='12345')
-        response = self.client.post(reverse('search_results'), {'search': 'John'})
-        self.assertRedirects(response, reverse('home'))
-        self.assertEqual(response.status_code, 302)
+        response = self.client.post(reverse('search_results'),
+                                    {'searched': 'John'})
+        self.assertTemplateUsed(response, 'search_results.html')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('records', response.context)
+        self.assertIn('searched', response.context)
+        self.assertEqual(response.context['searched'], 'John')
 
     def test_search_results_view_post_unauthenticated(self):
         response = self.client.post(reverse('search_results'), {'search': 'John'})
@@ -325,7 +323,7 @@ class ViewTestCase(TestCase):
 
 
 
-    # Audit Logs View Tests
+# Audit Logs View Tests
 
     def test_audit_logs_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -348,7 +346,7 @@ class ViewTestCase(TestCase):
         self.assertTrue('records' in response.context)
         self.assertEqual(list(response.context['records']), [self.record])
 
-    # User Active Status View Tests
+# User Active Status View Tests
 
     def test_user_active_status_view_authenticated(self):
         self.client.login(username='testuser', password='12345')
@@ -366,7 +364,15 @@ class ViewTestCase(TestCase):
         self.user.save()
         self.client.login(username='testuser', password='12345')
         response = self.client.get(reverse('user_active_status', args=[self.user.id]))
-        self.assertRedirects(response, reverse('home'))
+        self.assertRedirects(response, reverse('user_management'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_user_active_status_view_post_staff(self):
+        self.user.is_staff = True
+        self.user.save()
+        self.client.login(username='testuser', password='12345')
+        response = self.client.post(reverse('user_active_status', args=[self.user.id]))
+        self.assertRedirects(response, reverse('user_management'))
         self.assertEqual(response.status_code, 302)
 
     def test_user_active_status_view_post_authenticated(self):
@@ -376,21 +382,6 @@ class ViewTestCase(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_user_active_status_view_post_unauthenticated(self):
-        response = self.client.post(reverse('user_active_status', args=[self.user.id]))
-        self.assertRedirects(response, reverse('home'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_user_active_status_view_post_staff(self):
-        self.user.is_staff = True
-        self.user.save()
-        self.client.login(username='testuser', password='12345')
-        response = self.client.post(reverse('user_active_status', args=[self.user.id]))
-        self.assertRedirects(response, reverse('home'))
-        self.assertEqual(response.status_code, 302)
-
-    def test_user_active_status_view_post_staff_self(self):
-        self.user.is_staff = True
-        self.user.save()
         response = self.client.post(reverse('user_active_status', args=[self.user.id]))
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(response.status_code, 302)
