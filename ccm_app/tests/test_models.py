@@ -1,50 +1,78 @@
-from ccm_app.models import Record
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.utils import timezone
+from datetime import datetime
+from ccm_app.models import Record
 
-class RecordModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        # Set up non-modified data for all class methods
-        cls.user = User.objects.create_user(username='testuser', password='12345')
+class RecordModelTestCase(TestCase):
+    def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(username='test_user', password='password123')
 
     def test_record_creation(self):
-        # Test creating a new Record instance
+        # Create a Record object
         record = Record.objects.create(
             created_by=self.user,
-            payment_reference='ABC123',
+            payment_reference='TestPayment123',
             first_name='John',
             last_name='Doe',
             contact_method='Email',
-            contact_date=timezone.now(),
+            contact_date=datetime.now(),
             contact_status='Pending',
-            notes='Initial contact made.',
-            updated_by='Jane Doe',
+            notes='This is a test note.',
+            updated_by='Admin',
         )
-        # Assert the record was created correctly
-        self.assertTrue(isinstance(record, Record))
-        self.assertEqual(record.created_by, self.user)
-        self.assertEqual(record.payment_reference, 'ABC123')
+
+        # Check if the record was created successfully
+        self.assertIsNotNone(record)
+        self.assertEqual(record.payment_reference, 'TestPayment123')
         self.assertEqual(record.first_name, 'John')
         self.assertEqual(record.last_name, 'Doe')
         self.assertEqual(record.contact_method, 'Email')
         self.assertEqual(record.contact_status, 'Pending')
-        self.assertEqual(record.notes, 'Initial contact made.')
-        self.assertEqual(record.updated_by, 'Jane Doe')
+        self.assertEqual(record.notes, 'This is a test note.')
+        self.assertEqual(record.updated_by, 'Admin')
 
-    def test_record_fields_nullable(self):
-        # Test creating a Record with minimal required fields to ensure null=True fields can be left blank
+    def test_record_update(self):
+        # Create a Record object
         record = Record.objects.create(
             created_by=self.user,
-            payment_reference='XYZ789',
-            first_name='Alice',
-            last_name='Smith',
-            contact_method='Phone',
-            contact_date=timezone.now(),
-            contact_status='Completed',
-            notes='',
+            payment_reference='TestPayment123',
+            first_name='John',
+            last_name='Doe',
+            contact_method='Email',
+            contact_date=datetime.now(),
+            contact_status='Pending',
+            notes='This is a test note.',
+            updated_by='Admin',
         )
-        # Verify that the created record can be saved with null fields where allowed
-        self.assertTrue(isinstance(record, Record))
-        self.assertIsNone(record.updated_by)
+
+        # Update the record
+        record.payment_reference = 'UpdatedPayment456'
+        record.save()
+
+        # Retrieve the updated record from the database
+        updated_record = Record.objects.get(id=record.id)
+
+        # Check if the record was updated successfully
+        self.assertEqual(updated_record.payment_reference, 'UpdatedPayment456')
+
+    def test_record_deletion(self):
+        # Create a Record object
+        record = Record.objects.create(
+            created_by=self.user,
+            payment_reference='TestPayment123',
+            first_name='John',
+            last_name='Doe',
+            contact_method='Email',
+            contact_date=datetime.now(),
+            contact_status='Pending',
+            notes='This is a test note.',
+            updated_by='Admin',
+        )
+
+        # Delete the record
+        record.delete()
+
+        # Attempt to retrieve the deleted record from the database
+        with self.assertRaises(Record.DoesNotExist):
+            Record.objects.get(id=record.id)

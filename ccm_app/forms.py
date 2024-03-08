@@ -1,14 +1,16 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django import forms
 from .models import Record
-
 
 # Create sign up form
 # This form is used to register new users
 # It inherits from UserCreationForm, which is a built-in form for user registration
 # It adds fields for first name and last name
 # It also customizes the appearance of the form fields
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+
+# Create sign up form
 class SignUpForm(UserCreationForm):
     # Define form fields
     email = forms.EmailField(label="",
@@ -18,40 +20,49 @@ class SignUpForm(UserCreationForm):
     last_name = forms.CharField(label="", max_length=100,
                                 widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
 
+    # Define model and fields
     class Meta:
-        # Define model and fields
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
+    # Define form initialization
     def __init__(self, *args, **kwargs):
-        # Customize the appearance of the form fields
         super(SignUpForm, self).__init__(*args, **kwargs)
 
-        # Add custom styling to the username field
-        self.fields['username'].widget.attrs['class'] = 'form-control'
-        self.fields['username'].widget.attrs['placeholder'] = 'User Name'
-        self.fields['username'].label = ''
-        self.fields['username'].help_text = (
-            '<span class="form-text text-muted"><small>Required. 150 characters or fewer. '
-            'Letters, digits and @/./+/-/_ only.</small></span>')
+        # Add custom styling to the username field, password1 field, and password2 field
+        for field_name in ['username', 'password1', 'password2']:
+            self.fields[field_name].widget.attrs['class'] = 'form-control'
+            self.fields[field_name].widget.attrs['placeholder'] = self.fields[field_name].label
+            self.fields[field_name].label = ''
 
-        # Add custom styling to the email field
-        self.fields['password1'].widget.attrs['class'] = 'form-control'
-        self.fields['password1'].widget.attrs['placeholder'] = 'Password'
-        self.fields['password1'].label = ''
+        # Add custom styling and help text to the password1 field
         self.fields['password1'].help_text = (
             '<ul class="form-text text-muted small"><li>Your password can\'t be too similar '
             'to your other personal information.</li><li>Your password must contain at least '
             '8 characters.</li><li>Your password can\'t be a commonly used '
             'password.</li><li>Your password can\'t be entirely numeric.</li></ul>')
 
-        # Add custom styling to the password field
-        self.fields['password2'].widget.attrs['class'] = 'form-control'
-        self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
-        self.fields['password2'].label = ''
+        # Add custom styling and help text to the password2 field
         self.fields['password2'].help_text = (
             '<span class="form-text text-muted"><small>Enter the same password as before, '
             'for verification.</small></span>')
+
+    # Define form validation
+    # Django forms auth already does some of the validation for us
+    def clean_username(self):
+        # Check if the username already exists
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('Username already exists.')
+        return username
+
+    def clean_email(self):
+        # Check if the email already exists
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email address is already in use.')
+        return email
+
 
 
 # Create custom date time input
@@ -105,7 +116,8 @@ class AddRecordForm(forms.ModelForm):
 # Create update record form
 # This form is used to update existing payment records
 # It inherits from forms.ModelForm, which is a built-in form for model-based forms
-# It adds fields for payment reference, first name, last name, contact method, contact date, contact status, notes, and updated by
+# It adds fields for payment reference, first name, last name,
+# contact method, contact date, contact status, notes, and updated by
 class UpdateRecordForm(forms.ModelForm):
     # Define form fields
     payment_reference = forms.CharField(required=True, label="", widget=forms.TextInput(

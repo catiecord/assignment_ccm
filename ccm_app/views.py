@@ -1,29 +1,32 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm, UpdateRecordForm
 from .models import Record
+from django.contrib.auth.models import User
 
 
 # This is the view function for the home page
 def home(request):
     # Get all records
     records = Record.objects.all()
-    # Check if the user is authenticated
+
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
         user = authenticate(request, username=username, password=password)
-        # Authenticate and login user
+
         if user is not None:
             login(request, user)
-            messages.success(request, ('You have been logged in!'))
+            messages.success(request, 'You have been logged in!')
             return redirect('home')
-        # Provide feedback to the user
         else:
-            messages.error(request, ('Error logging in - please try again...'))
+            if not User.objects.filter(username=username).exists():
+                messages.error(request, 'User does not exist.')
+            else:
+                messages.error(request, 'Incorrect password. Please try again.')
             return redirect('home')
-    # If the user is not authenticated, render the home page
     else:
         return render(request, 'home.html', {'records': records})
 
@@ -31,32 +34,30 @@ def home(request):
 def logout_user(request):
     # Logout user, provide feedback and redirect to the home page
     logout(request)
-    messages.success(request, ('You have been logged out!'))
+    messages.success(request, 'You have been logged out!')
     return redirect('home')
-
 
 # This is the view function for the register page
 def register_user(request):
-    # Check if the user is authenticated
     if request.method == 'POST':
-        # Create a new user
         form = SignUpForm(request.POST)
-        # If the form is valid, save the user and provide feedback
         if form.is_valid():
             user = form.save(commit=False)
-            # Set the user's password
             user.set_password(form.cleaned_data['password1'])
-            # Save the user
             user.save()
-            # Authenticate and login the user
-            login(request, user)
-            messages.success(request, 'You have been registered! Welcome to the CCM App!')
-            return redirect('home')
-        # If the form is not valid, provide feedback
+            authenticated_user = authenticate(username=user.username, password=form.cleaned_data['password1'])
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+                messages.success(request, 'You have been registered! Welcome to the CCM App!')
+                return redirect('/')
+            else:
+                messages.error(request, 'Failed to log in after registration.')
         else:
-            messages.error(request, 'Error registering - please try again...')
-            return redirect('register')
-    # If the user is not authenticated, render the register page
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")
+            # Instead of redirecting, render the template with the invalid form
+            return render(request, 'register.html', {'form': form})
     else:
         form = SignUpForm()
     return render(request, 'register.html', {'form': form})
@@ -93,7 +94,7 @@ def add_record(request):
                 record.save()
                 messages.success(request, 'Record has been added!')
                 return redirect('home')
-        # If the form is not valid, provide feedback
+            # If the form is not valid, provide feedback
             else:
                 messages.error(request, 'Error adding record - please try again...')
                 return render(request, 'add_record.html', {'form': form})
@@ -173,8 +174,8 @@ def user_management(request):
         # Check if the user is staff
         if request.user.is_staff:
             # Get all users
-            User = get_user_model()
-            users = User.objects.all()
+            user = get_user_model()
+            users = user.objects.all()
             # Render the user management page
             return render(request, 'user_management.html', {'users': users})
         # If the user is not staff, provide feedback and redirect to the home page
@@ -193,16 +194,16 @@ def user_active_status(request, user_id):
     if request.user.is_authenticated:
         # Check if the user is staff
         if request.user.is_staff:
-            User = get_user_model()
+            user = get_user_model()
             try:
                 # Get the user by ID
-                user = User.objects.get(pk=user_id)
-            except User.DoesNotExist:
+                user = user.objects.get(pk=user_id)
+            except user.DoesNotExist:
                 messages.error(request, "User not found.")
                 return redirect("user_management")
 
             # Check if the user to toggle is the same as the logged-in user
-            if user == request.user:
+            if user.pk == request.user.pk:
                 messages.error(request, "You cannot deactivate your own account!")
                 return redirect("user_management")
 
