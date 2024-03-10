@@ -20,8 +20,9 @@ Working demonstration:
 1. Clone the repository
 2. Create a virtual environment and activate it
 3. Install the required libraries
-   - Django
-   - MySQL
+   - django
+   - mysql
+   - mysql-connector-python
 4. Set up the database (or use the included MySQL database) and create a new super user
     - Update settings.py with the database details
     - Run `python manage.py makemigrations` and `python manage.py migrate`
