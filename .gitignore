@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # Ignore congiguration files
 *.ini
 
@@ -17,7 +16,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.pyc
 
 # Ignore the media folder where Django by default will put uploaded files
 /media/
@@ -28,8 +26,4 @@ virt/
 # Ignore coverage files
 .coverage
 htmlcov/
-=======
-/virt/
-/idea
-.coverage
->>>>>>> Stashed changes
+
