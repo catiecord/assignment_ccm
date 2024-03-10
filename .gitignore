@@ -26,3 +26,4 @@ virt/
 
 # Ignore coverage files
 .coverage
+htmlcov/
