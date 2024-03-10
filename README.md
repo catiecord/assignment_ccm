@@ -39,24 +39,24 @@ The user can add a new contact, view all contacts, view a single contact, update
 The admin user has additional functionality to delete a contact, view all users, search for a contact, activate and deactivate user accounts and access audit logs for each contact.
 
 ### Regular users can :
-- Add a new contact
-- View all contacts
-- View a single contact
-- Update a contact
-- Search for a contact
+- Add a new record
+- View all records
+- View a single record
+- Update a record
+- Search for a record
 
 ### Admin users can:
-- Add a new contact
-- View all contacts
-- View a single contact
-- Update a contact
-- Delete a contact
+- Add a new record
+- View all record
+- View a single record
+- Update a record
+- Delete a record-
+- Search for a record
 - View all users
-- Search for a contact
 - Activate and deactivate user accounts
-- Access audit logs for each contact
+- Access audit logs for each record
   - Date and time of creation or update
-  - User who created or updated the contact
+  - User who created or updated the record
 
 # Models
 The application has one model, Contact, which has the following fields:
