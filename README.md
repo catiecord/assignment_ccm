@@ -59,7 +59,8 @@ The admin user has additional functionality to delete a contact, view all users,
   - User who created or updated the contact
 
 # Models
-The application has one model, Contact, which has the following fields:
+The application has one model, Record, which has the following fields:
+
     - created_at
     - created_by
     - payment_reference
