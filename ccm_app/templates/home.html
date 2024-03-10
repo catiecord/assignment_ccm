@@ -27,11 +27,16 @@
               <td>{{ record.contact_date }}</td>
               <td>{{ record.contact_status }}</td>
               <td>{{ record.notes }}</td>
-              <td><a href="{% url 'update_record' record.id %}" class="btn btn-primary">Update Record</a>
-                  {% if user.is_staff %}
-                  <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">Delete</a>
-                    {% endif %}
-              </td>
+                <td>
+                    <div style="margin-bottom: 10px;">
+                        <a href="{% url 'update_record' record.id %}" class="btn btn-primary">Update</a>
+                    </div>
+                    <div>
+                        {% if user.is_staff %}
+                        <a href="{% url 'delete_record' record.id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                </td>
           </tr>
             {% endfor %}
         {% endif %}

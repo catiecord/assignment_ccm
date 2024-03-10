@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Ignore congiguration files
 *.ini
 
@@ -27,3 +28,8 @@ virt/
 # Ignore coverage files
 .coverage
 htmlcov/
+=======
+/virt/
+/idea
+.coverage
+>>>>>>> Stashed changes
