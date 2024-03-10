@@ -39,24 +39,24 @@ The user can add a new contact, view all contacts, view a single contact, update
 The admin user has additional functionality to delete a contact, view all users, search for a contact, activate and deactivate user accounts and access audit logs for each contact.
 
 ### Regular users can :
-- Add a new contact
-- View all contacts
-- View a single contact
-- Update a contact
-- Search for a contact
+- Add a new record
+- View all records
+- View a single record
+- Update a record
+- Search for a record
 
 ### Admin users can:
-- Add a new contact
-- View all contacts
-- View a single contact
-- Update a contact
-- Delete a contact
+- Add a new record
+- View all records
+- View a single record
+- Update a record
+- Search for a record
+- Delete a record
 - View all users
-- Search for a contact
 - Activate and deactivate user accounts
-- Access audit logs for each contact
+- Access audit logs for each record
   - Date and time of creation or update
-  - User who created or updated the contact
+  - User who created or updated the record
 
 # Models
 The application has one model, Record, which has the following fields:
@@ -80,6 +80,8 @@ The model is used to store the details of each contact made with a customer. The
 The application has been tested using the Django test framework. The tests are located in the tests directory and test forms, models, urls and views.
 
 To run the tests, navigate to the root directory and run `python manage.py test`
+
+
 
 
 
