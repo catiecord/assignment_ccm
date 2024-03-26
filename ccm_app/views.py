@@ -53,9 +53,7 @@ def register_user(request):
             else:
                 messages.error(request, 'Failed to log in after registration.')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.capitalize()}: {error}")
+            # Errors in form completion are handled in the form file directly
             # Instead of redirecting, render the template with the invalid form
             return render(request, 'register.html', {'form': form})
     else:
